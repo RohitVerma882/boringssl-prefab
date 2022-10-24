@@ -1,0 +1,4 @@
+[submodule "boringssl-source"]
+	path = boringssl-source
+	url = https://github.com/RohitVerma882/boringssl.git
+	branch = main
