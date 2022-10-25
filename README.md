@@ -1,6 +1,7 @@
 # BoringSSL Prefab
 [![](https://img.shields.io/badge/Minimum%20Sdk-21-2196F3)](https://github.com/RohitVerma882/libcxx-prefab)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
+[![Maven Central](https://img.shields.io/maven-central/v/org.apache.maven.plugins/maven-release-plugin.svg?label=Maven%20Central)](https://search.maven.org/artifact/org.apache.maven.plugins/maven-release-plugin)
 
 Prefab package for https://github.com/RohitVerma882/boringssl
 
@@ -26,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.rv882.ndk.thirdparty:boringssl:1.0.0'
+    implementation 'io.github.rohitverma882:boringssl:1.0.0-android-r13'
 }
 ```
 

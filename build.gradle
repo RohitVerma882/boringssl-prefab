@@ -19,8 +19,3 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
-
-ext {
-    ndkPath = System.getenv('NDK_PATH')
-    ndkVersion = '24.0.8215888'
-}

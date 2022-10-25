@@ -1,20 +1,20 @@
 plugins {
     id 'com.android.library'
-    id 'maven-publish'
+    id 'com.vanniktech.maven.publish' version '0.22.0'
 }
 
 android {
     compileSdkVersion 32
     buildToolsVersion "32.0.0"
     
-    ndkVersion = rootProject.ext.ndkVersion
-    // ndkPath = rootProject.ext.ndkPath
+    ndkPath = System.getenv('NDK_PATH')
+    // ndkVersion = '24.0.8215888'
     
     defaultConfig {
         minSdkVersion 21
         targetSdkVersion 32
         versionCode 1
-        versionName "1.0.0"
+        versionName "1.0.0-android-r13"
         
         externalNativeBuild {
             ndkBuild {
@@ -56,6 +56,41 @@ android {
     }
 }
 
-dependencies {
-    
+mavenPublishing {
+    publishToMavenCentral("S01")
+    signAllPublications()
 }
+
+group = "io.github.rohitverma882"
+version = android.defaultConfig.versionName
+println("${rootProject.displayName}: ${group}:${rootProject.name}:${version}")
+
+mavenPublishing {
+    pom {
+        name = "BoringSSL Prefab"
+        description = "boringssl for Android ndk"
+        inceptionYear = "2022"
+        packaging = "aar"
+        url = "https://github.com/RohitVerma882/boringssl-prefab"
+        licenses {
+            license {
+                name = "Apache License v2.0"
+                url = "https://github.com/RohitVerma882/boringssl-prefab/blob/main/LICENSE"
+                distribution = "repo"
+            }
+         }
+        developers {
+            developer {
+               id = "RohitVerma882"
+               name = "Rohit Verma"
+               url = "https://github.com/RohitVerma882"
+            }
+        }
+        scm {
+            url = "https://github.com/RohitVerma882/boringssl-prefab.git"
+            connection = "scm:git:git://github.com/RohitVerma882/boringssl-prefab.git"
+            developerConnection = "scm:git:ssh://git@github.com/RohitVerma882/boringssl-prefab.git"
+        }
+    }
+}
+
