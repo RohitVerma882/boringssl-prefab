@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'io.github.rohitverma882:boringssl-prefab:1.0.0-android-r13'
+    implementation 'io.github.rohitverma882:boringssl-prefab:1.0.0'
 }
 ```
 
@@ -44,11 +44,12 @@ ifneq ($(call ndk-major-at-least,21),true)
 endif
 
 $(call import-module,prefab/crypto)
+$(call import-module,prefab/ssl)
 ```
 
 ### CMake
 
 ```cmake
 find_package(boringssl REQUIRED CONFIG)
-target_link_libraries(<your lib> boringssl::crypto)
+target_link_libraries(<your lib> boringssl::crypto boringssl::ssl)
 ```
