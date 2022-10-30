@@ -36,7 +36,7 @@ dependencies {
 ### ndk-build
 
 ```makefile
-LOCAL_STATIC_LIBRARIES := crypto
+LOCAL_STATIC_LIBRARIES := crypto ssl
 
 # You can remove this block if you are using NDK r21+.
 ifneq ($(call ndk-major-at-least,21),true)
