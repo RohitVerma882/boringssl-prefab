@@ -27,7 +27,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'io.github.rohitverma882:boringssl-prefab:1.0.0'
+    implementation 'io.github.rohitverma882:boringssl-prefab:<letest-version>'
 }
 ```
 

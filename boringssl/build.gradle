@@ -1,3 +1,6 @@
+import java.nio.file.Files
+import java.nio.file.Paths
+
 plugins {
     id 'com.android.library'
     id 'com.vanniktech.maven.publish' version '0.21.0'
@@ -20,10 +23,6 @@ android {
             ndkBuild {
                 arguments "-j${Runtime.getRuntime().availableProcessors()}"
             }
-        }
-        
-        ndk {
-            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
         }
     }
     
@@ -55,3 +54,48 @@ android {
         }
     }
 }
+
+// NDK does not run strip on static libraries, do it ourselves
+def allAbi = [
+        'armeabi-v7a': 'llvm-strip',
+        'arm64-v8a'  : 'llvm-strip',
+        'x86'        : 'llvm-strip',
+        'x86_64'     : 'llvm-strip']
+
+def stripNativeRelease = task('stripNativeRelease').doLast {
+    def isWindows = org.gradle.internal.os.OperatingSystem.current().isWindows()
+
+    for (String abi : allAbi.keySet()) {
+        def path = Paths.get(project.buildDir.path, 'intermediates', 'cxx', 'Release')
+        path = Files.walk(path).filter { it != path }.findFirst().get()
+        path = Paths.get(path.toString(), 'obj', 'local', abi)
+        
+        def lib = path.resolve('libcrypto.a')
+        def lib2 = path.resolve('libssl.a')
+
+        def toolchain = Paths.get(android.ndkDirectory.toString(), 'toolchains', 'llvm', 'prebuilt')
+        toolchain = Files.walk(toolchain).filter { it != toolchain }.findFirst().get()
+
+        def strip = "${allAbi.get(abi)}${isWindows ? ".exe" : ""}"
+        def stripPath = toolchain.resolve(Paths.get('bin', strip))
+
+        exec {
+            commandLine stripPath, '--strip-unneeded', '--remove-section=.comment', lib
+            workingDir path
+            ignoreExitValue false
+        }
+        
+        exec {
+            commandLine stripPath, '--strip-unneeded', '--remove-section=.comment', lib2
+            workingDir path
+            ignoreExitValue false
+        }
+    }
+}
+
+tasks.whenTaskAdded { task ->
+    if (task.name == 'externalNativeBuildRelease') {
+        task.finalizedBy stripNativeRelease
+    }
+}
+
