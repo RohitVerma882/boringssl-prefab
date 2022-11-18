@@ -1,6 +1,3 @@
-[submodule "boringssl/jni"]
-	path = boringssl/jni
-	url = https://android.googlesource.com/platform/external/boringssl
 [submodule "boringssl/native"]
 	path = boringssl/native
 	url = https://github.com/google/boringssl.git
