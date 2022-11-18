@@ -14,14 +14,14 @@ android {
     // ndkVersion = '24.0.8215888'
     
     defaultConfig {
-        minSdkVersion 21
+        minSdkVersion 24
         targetSdkVersion 32
         versionCode Integer.valueOf(project.findProperty("VERSION_CODE"))
         versionName project.findProperty("VERSION_NAME")
         
         externalNativeBuild {
-            ndkBuild {
-                arguments "-j${Runtime.getRuntime().availableProcessors()}"
+            cmake {
+                arguments "-DANDROID_NATIVE_API_LEVEL=24"
             }
         }
     }
@@ -34,23 +34,24 @@ android {
     
     sourceSets {
         main {
-            jni.srcDirs = ['jni']
+            jni.srcDirs = ['native']
         }
     }
 
     externalNativeBuild {
-        ndkBuild {
-            path "jni/Android.mk"
+        cmake {
+            path "native/CMakeLists.txt"
+            version "3.24.2"
         }
     }
     
     prefab {
         crypto {
-            headers "$rootDir/boringssl-source/src/include"
+            headers "native/include"
         }
         
         ssl {
-            headers "$rootDir/boringssl-source/src/include"
+            headers "native/include"
         }
     }
 }
@@ -66,12 +67,14 @@ def stripNativeRelease = task('stripNativeRelease').doLast {
     def isWindows = org.gradle.internal.os.OperatingSystem.current().isWindows()
 
     for (String abi : allAbi.keySet()) {
-        def path = Paths.get(project.buildDir.path, 'intermediates', 'cxx', 'Release')
+        def path = Paths.get(project.buildDir.path, '..', '.cxx', 'RelWithDebInfo')
         path = Files.walk(path).filter { it != path }.findFirst().get()
-        path = Paths.get(path.toString(), 'obj', 'local', abi)
         
-        def lib = path.resolve('libcrypto.a')
-        def lib2 = path.resolve('libssl.a')
+        def crypto_path = Paths.get(path.toString(), abi, 'crypto')
+        def ssl_path = Paths.get(path.toString(), abi, 'ssl')
+
+        def lib = crypto_path.resolve('libcrypto.a')
+        def lib2 = ssl_path.resolve('libssl.a')
 
         def toolchain = Paths.get(android.ndkDirectory.toString(), 'toolchains', 'llvm', 'prebuilt')
         toolchain = Files.walk(toolchain).filter { it != toolchain }.findFirst().get()
@@ -98,4 +101,3 @@ tasks.whenTaskAdded { task ->
         task.finalizedBy stripNativeRelease
     }
 }
-

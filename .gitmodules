@@ -1,4 +1,6 @@
-[submodule "boringssl-source"]
-	path = boringssl-source
-	url = https://github.com/RohitVerma882/boringssl.git
-	branch = main
+[submodule "boringssl/jni"]
+	path = boringssl/jni
+	url = https://android.googlesource.com/platform/external/boringssl
+[submodule "boringssl/native"]
+	path = boringssl/native
+	url = https://github.com/google/boringssl.git
